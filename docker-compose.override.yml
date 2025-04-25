@@ -1,3 +1,8 @@
+# 로컬 개발환경 설정
+# docker compose up -d --build
 services:
   app:
-    image: mumulbo/sample-service:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: demo-app:local

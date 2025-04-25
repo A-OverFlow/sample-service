@@ -51,17 +51,17 @@ jobs:
         run: |
           scp -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no docker-compose.yml \
           ${{ secrets.DEV_EC2_HOST }}:${{ steps.vars.outputs.DEPLOY_DIR }}/docker-compose.yml
-          scp -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no docker-compose.override.yml \
-          ${{ secrets.DEV_EC2_HOST }}:${{ steps.vars.outputs.DEPLOY_DIR }}/docker-compose.override.yml
 
       - name: .env 파일 생성
         run: |
-          echo "SERVER_PORT=${{ vars.SERVER_PORT }}" >> .env
-          echo "DB_HOST=${{ vars.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ vars.DB_PORT }}" >> .env
+          echo "SERVER_PORT=${{ vars.SERVER_PORT }}" > .env
           echo "DB_NAME=${{ vars.DB_NAME }}" >> .env
+          echo "DB_HOST=${{ vars.DB_HOST }}" >> .env
+          echo "HOST_DB_PORT=${{ vars.HOST_DB_PORT }}" >> .env
+          echo "CONTAINER_DB_PORT=${{ vars.CONTAINER_DB_PORT }}" >> .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_ROOT_PASSWORD=${{ secrets.DB_ROOT_PASSWORD }}" >> .env
 
       - name: .env 파일 복사
         run: |

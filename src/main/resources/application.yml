@@ -3,14 +3,14 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:demo_db}
+    url: jdbc:mariadb://${DB_HOST:localhost}:${CONTAINER_DB_PORT:3307}/${DB_NAME:demo_db}
     username: ${DB_USERNAME:demo_user}
     password: ${DB_PASSWORD:demo_password}
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}  # ?? ? validate ?? none ??
+      ddl-auto: ${JPA_DDL_AUTO:update}
     show-sql: ${JPA_SHOW_SQL:true}
     properties:
       hibernate:
@@ -21,4 +21,4 @@ logging:
   level:
     root: ${LOG_ROOT_LEVEL:info}
     org.springframework.web: ${LOG_WEB_LEVEL:debug}
-    com.demo: ${LOG_APP_LEVEL:debug}  # ???? ??? ??
+    com.demo: ${LOG_APP_LEVEL:debug}
