@@ -1,5 +1,5 @@
 # 워크플로우 이름 정의 - GitHub Actions 페이지에 표시될 이름
-name: [DEV] CI - Build & Test
+name: DEV CI - Build & Test
 
 # 워크플로우 트리거 조건
 on:
