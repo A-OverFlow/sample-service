@@ -5,7 +5,7 @@ on:
     branches: [ dev ]
 
 jobs:
-  배포:
+  deploy-dev:
     runs-on: ubuntu-latest
     environment: dev  # ✅ dev 환경의 secrets/variables 사용을 위해 필수
 
