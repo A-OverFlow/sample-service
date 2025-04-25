@@ -1,27 +1,26 @@
 # 1단계: 빌드 스테이지
-FROM gradle:8.6-jdk17 AS builder
+FROM gradle:8.5-jdk17 AS build
 
-# 빌드 캐시 최적화
-COPY build.gradle settings.gradle gradlew ./
-COPY gradle ./gradle
-RUN chmod +x gradlew
-RUN ./gradlew --no-daemon build -x test || return 0
+# 작업 디렉토리 설정
+WORKDIR /app
 
-# 전체 소스 복사
+# 의존성 캐싱 유도를 위한 빌드 스크립트만 복사
+COPY build.gradle settings.gradle ./
+
+# 의존성만 먼저 다운로드
+RUN gradle dependencies --no-daemon || return 0
+
+# 전체 프로젝트 복사
 COPY . .
 
-# gradlew가 덮어씌워졌으므로 다시 권한 부여
-RUN chmod +x gradlew
+# Spring Boot JAR 빌드 (테스트 생략)
+RUN gradle bootJar --no-daemon -x test
 
-# 애플리케이션 빌드
-RUN ./gradlew --no-daemon clean bootJar -x test
-
-# 2단계: 실행 스테이지
+# 2단계: 런타임 스테이지 (경량 JDK만 포함)
 FROM eclipse-temurin:17-jdk-alpine
 
-# 빌드한 JAR 파일 복사
-COPY --from=builder /home/gradle/build/libs/*.jar /app/app.jar
+# 빌드된 JAR 복사
+COPY --from=build /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# 앱 실행
+ENTRYPOINT ["java", "-jar", "/app.jar"]
