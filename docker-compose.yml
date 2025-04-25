@@ -1,6 +1,9 @@
 services:
   app:
-    image: mumulbo/sample-service:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: demo-app:local
     env_file:
       - .env
     ports:

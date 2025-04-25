@@ -1,4 +1,4 @@
-name: CD - Deploy to Dev
+name: [DEV] CD - Deploy to EC2
 
 on:
   push:
@@ -51,6 +51,8 @@ jobs:
         run: |
           scp -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no docker-compose.yml \
           ${{ secrets.DEV_EC2_HOST }}:${{ steps.vars.outputs.DEPLOY_DIR }}/docker-compose.yml
+          scp -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no docker-compose.yml \
+          ${{ secrets.DEV_EC2_HOST }}:${{ steps.vars.outputs.DEPLOY_DIR }}/docker-compose.override.yml
 
       - name: .env 파일 생성
         run: |
