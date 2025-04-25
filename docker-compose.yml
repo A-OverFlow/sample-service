@@ -1,10 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: demo-app:local
-#    image: ghcr.io/your-org/demo-app:latest
+    image: ghcr.io/your-org/demo-app:latest
     env_file:
       - .env
     ports:
