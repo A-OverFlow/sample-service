@@ -4,6 +4,11 @@ FROM gradle:8.6-jdk17 AS builder
 # 빌드 캐시 최적화
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
+
+# gradlew 실행 권한 부여
+RUN chmod +x gradlew
+
+# 의존성 캐시를 위한 프리빌드
 RUN ./gradlew --no-daemon build -x test || return 0
 
 # 전체 소스 복사
