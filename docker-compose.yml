@@ -1,28 +1,26 @@
+# 개발 서버 배포 설정
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: demo-app:local
-#    image: ghcr.io/your-org/demo-app:latest
+    image: mumulbo/sample-service:dev
     env_file:
       - .env
     ports:
-      - "${SERVER_PORT:-8080}:8080"
+      - "${SERVICE_PORT}:8080"
     networks:
       - external-net
     depends_on:
       - db
-
+    restart: always
+  # db 컨테이너만 실행 : docker compose up -d db
   db:
     image: mariadb:11
     environment:
       MARIADB_DATABASE: ${DB_NAME}
       MARIADB_USER: ${DB_USERNAME}
       MARIADB_PASSWORD: ${DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${HOST_DB_PORT}:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:

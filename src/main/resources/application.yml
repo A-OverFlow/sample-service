@@ -1,24 +1,39 @@
+# 서버 관련 설정
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8080 # 애플리케이션이 실행될 포트 번호 (기본값: 8080)
 
+# 스프링 부트 설정
 spring:
   datasource:
-    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:demo_db}
+    # 데이터베이스 접속 URL
+    # ${}는 환경 변수 값 또는 기본 값을 사용 (없으면 기본값 사용)
+    url: jdbc:mariadb://${DB_HOST:localhost}:${CONTAINER_DB_PORT:3307}/${DB_NAME:demo_db}
+    # 데이터베이스 접속 사용자명
     username: ${DB_USERNAME:demo_user}
+    # 데이터베이스 접속 비밀번호
     password: ${DB_PASSWORD:demo_password}
+    # JDBC 드라이버 클래스 명
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:update}  # ?? ? validate ?? none ??
+      # Hibernate의 DDL(auto) 설정 (create, update, validate, none 등)
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    # SQL 쿼리를 콘솔에 출력할지 여부
     show-sql: ${JPA_SHOW_SQL:true}
     properties:
       hibernate:
+        # SQL 포맷팅 여부 (가독성 좋게 출력)
         format_sql: ${JPA_FORMAT_SQL:true}
+        # 사용할 데이터베이스 방언 설정 (MariaDB용)
         dialect: org.hibernate.dialect.MariaDBDialect
 
+# 로깅 레벨 설정
 logging:
   level:
+    # 전체 애플리케이션의 기본 로그 레벨 (info, debug, warn, error 등)
     root: ${LOG_ROOT_LEVEL:info}
+    # Spring Web 관련 로그 레벨
     org.springframework.web: ${LOG_WEB_LEVEL:debug}
-    com.demo: ${LOG_APP_LEVEL:debug}  # ???? ??? ??
+    # 애플리케이션 패키지(com.demo) 관련 로그 레벨
+    com.demo: ${LOG_APP_LEVEL:debug}
