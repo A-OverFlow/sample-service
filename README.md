@@ -39,21 +39,41 @@
 
 ### 테스트
 
-- 애플리케이션 또는 컨테이너 로그에 에러 없는 지 확인
-- DB 컨테이너 접속 확인
 - API 호출 확인 (GET /demo)
+- DB 접속 확인 및 테이블에 저장되는 데이터 확인
+- 애플리케이션 또는 컨테이너 로그에 에러 없는 지 확인
 
 ## 개발 서버 배포
 
-- [ci.yml](.github/workflows/ci.yml) : dev 브랜치에 PR이 생성되거나 코드가 머지될 경우 동작
-- [cd-dev.yml](.github/workflows/cd-dev.yml) : dev 브랜치에 코드가 머지될 경우 동작
+- [ci.yml](.github/workflows/ci.yml)
+  - dev 브랜치에 PR이 생성되거나 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
+- [cd-dev.yml](.github/workflows/cd-dev.yml)
+  - dev 브랜치에 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
 
 ### 개발 서버에 적용되는 환경 변수
 
-- 프로젝트에 포함되어 있는 [.env](.env) 파일은 **로컬 개발 환경 전용**
-- 개발 서버에 적용되는 환경 변수는 깃허브 시크릿 & 변수로 관리
+- 프로젝트에 포함되어 있는 [.env](.env) 파일은 **로컬 개발 환경 전용** (사용하지 않음)
+- 개발 서버에 적용되는 .env 환경 변수는 깃허브 시크릿 & 변수로 관리 및 생성
     - [깃허브 액션 시크릿](https://github.com/A-OverFlow/sample-service/settings/secrets/actions)
     - [깃허브 액션 변수](https://github.com/A-OverFlow/sample-service/settings/variables/actions)
 
-### 테스트
+### 개발 서버 (EC2) 디렉토리 구조
 
+```text
+/home/ec2-user/deploy/     # 배포 디렉토리 (secrets.DEV_DEPLOY_PATH)
+└── sample-service         # 저장소(서비스) 이름 
+    ├── .env               # 깃허브 액션에서 생성한 환경 변수 파일
+    └── docker-compose.yml # 프로젝트에서 복사한 compose 파일
+```
+
+### 테스트 (25.04.26 기준)
+
+- API 호출
+  - http://dev.mumulbo.com:9999/demo
+  - API 호출한 시간 응답 (내부적으로는 호출 시간을 DB에 저장)
+- 깃허브 액션
+  - [깃허브 액션](https://github.com/A-OverFlow/sample-service/actions) 에서 workflow 정상 확인
+- EC2
+  - `docker ps` : 실행중인 컨테이너 확인
+  - `tree ~/deploy/ -a` : 배포 디렉토리 구조 확인
+  - `cat /home/ec2-user/deploy/sample-service/.env` : 현재 서비스에 적용중인 환경 변수 확인
