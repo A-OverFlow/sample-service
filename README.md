@@ -1,14 +1,59 @@
+# 구조 설명
+
+```text
+/프로젝트 루트
+├── .github/
+│   └── workflows/
+│       ├── cd-dev.yml                   # 개발 환경 배포 자동화 (CD) 워크플로 파일
+│       └── ci.yml                       # 빌드/테스트 자동화 (CI) 워크플로 파일
+├── docker-compose.override.yml          # (로컬 환경) Docker Compose 추가 설정
+├── docker-compose.yml                   # (개발 환경) Docker Compose 설정
+├── .env                                 # (로컬 환경) Docker Compose 에서 사용할 환경 변수 파일
+├── Dockerfile                           # Spring Boot 앱을 컨테이너 이미지로 만드는 빌드 스크립트
+├── .dockerignore                        # Docker 빌드 시 제외할 파일 목록
+├── src/
+│   └── main/
+│       └── resources/
+│           └── application.yml           # Spring Boot 애플리케이션 환경 설정 파일
+```
+
+## 특징
+
+### Docker Compose
+
+- [docker-compose.yml](docker-compose.yml)
+    - 배포 서버에서 실행될 파일
+- [docker-compose.override.yml](docker-compose.override.yml)
+    - 로컬 환경에서 `docker compose up` 명령을 사용하면 자동으로 덮어씌워 짐
+- [.env](.env)
+    - 로컬 환경에서만 사용되는 환경 변수 파일.
+    - 서버로 배포되는 .env 파일은 깃허브 액션에서 깃허브 시크릿을 통하여 생성된다.
+
+### Application
+
+- [application.yml](src/main/resources/application.yml)
+    - 스프링 부트 환경 설정 파일은 하나로 관리 된다.
+
+### GitHub actions secrets and variables
+
+- https://github.com/A-OverFlow/sample-service/settings/secrets/actions
+- 서버 배포를 위해 필요한 환경 변수들을 깃허브 시크릿으로 관리한다.
+- 주로 사용하는 환경 변수
+    - Environment secrets: 민감한 정보
+    - Organization secrets : 조직 레벨에서 사용할 수 있는 공통 시크릿
+    - Environment variables : 환경을 구분하여 관리하는 변수
+
 # 서비스 실행 방법
 
 ## 사전 준비
 
 - docker 설치
-  - 이 문서는 아래 docker 버전 기준으로 작성됨
-  - `docker -v` : Docker version 28.0.4
-  - `docker compose version` : Docker Compose version v2.34.0-desktop.1
+    - 이 문서는 아래 docker 버전 기준으로 작성됨
+    - `docker -v` : Docker version 28.0.4
+    - `docker compose version` : Docker Compose version v2.34.0-desktop.1
 - [docker-compose.yml](docker-compose.yml) 파일에서 사용하는 networks 생성
-  - 생성하지 않을 시 다음과 같은 에러 발생할 수 있음 (network sample-network declared as external, but could not be found)
-  - `docker network create [네트워크 이름]` 
+    - 생성하지 않을 시 다음과 같은 에러 발생할 수 있음 (network sample-network declared as external, but could not be found)
+    - `docker network create [네트워크 이름]`
 
 ## 로컬 개발 환경
 
@@ -46,9 +91,9 @@
 ## 개발 서버 배포
 
 - [ci.yml](.github/workflows/ci.yml)
-  - dev 브랜치에 PR이 생성되거나 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
+    - dev 브랜치에 PR이 생성되거나 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
 - [cd-dev.yml](.github/workflows/cd-dev.yml)
-  - dev 브랜치에 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
+    - dev 브랜치에 코드가 머지될 경우 동작 (파일 내부 동작 확인 추천)
 
 ### 개발 서버에 적용되는 환경 변수
 
@@ -69,11 +114,11 @@
 ### 테스트 (25.04.26 기준)
 
 - API 호출
-  - http://dev.mumulbo.com:9999/demo
-  - API 호출한 시간 응답 (내부적으로는 호출 시간을 DB에 저장)
+    - http://dev.mumulbo.com:9999/demo
+    - API 호출한 시간 응답 (내부적으로는 호출 시간을 DB에 저장)
 - 깃허브 액션
-  - [깃허브 액션](https://github.com/A-OverFlow/sample-service/actions) 에서 workflow 정상 확인
+    - [깃허브 액션](https://github.com/A-OverFlow/sample-service/actions) 에서 workflow 정상 확인
 - EC2
-  - `docker ps` : 실행중인 컨테이너 확인
-  - `tree ~/deploy/ -a` : 배포 디렉토리 구조 확인
-  - `cat /home/ec2-user/deploy/sample-service/.env` : 현재 서비스에 적용중인 환경 변수 확인
+    - `docker ps` : 실행중인 컨테이너 확인
+    - `tree ~/deploy/ -a` : 배포 디렉토리 구조 확인
+    - `cat /home/ec2-user/deploy/sample-service/.env` : 현재 서비스에 적용중인 환경 변수 확인
